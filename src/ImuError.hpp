@@ -44,7 +44,7 @@ struct Configuration
     base::Vector3d gbeta;
 };
 
-class ImuModel
+class ImuError
 {
 public:
     void init();

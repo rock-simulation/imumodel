@@ -1,8 +1,8 @@
-#include "ImuModel.hpp"
+#include "ImuError.hpp"
 
 using namespace imumodel;
 
-void ImuModel::init()
+void ImuError::init()
 {
    // initialize random number generator
    unsigned long seed =  
@@ -82,7 +82,7 @@ void ImuModel::init()
    Dgyro = Eigen::Matrix<double,NUMAXIS,NUMAXIS>::Zero();
 }
 
-void ImuModel::reset()
+void ImuError::reset()
 {
     /** Reset the state vectors and the output vectors **/
     xax << 0.0,0.0;
@@ -100,7 +100,7 @@ void ImuModel::reset()
     Dgyro = config.Dgyro;
 }
 
-void ImuModel::step()
+void ImuError::step()
 {
     /** White noise for the Velocty Random Walk for accelerometers **/
     base::Vector3d stdacc;
@@ -139,14 +139,14 @@ void ImuModel::step()
     gyros[2] = GetNormalDistri(0, stdgyro[2]) + (Hg.transpose() * xgz); // White noise + stochastic noise
 }
 
-void ImuModel::addNoise( base::samples::IMUSensors &imu_sample )
+void ImuError::addNoise( base::samples::IMUSensors &imu_sample )
 {
     /** Include the deterministic error to the model (accelerometer and gyroscopes) **/
     imu_sample.acc = (Eigen::Matrix<double,NUMAXIS,NUMAXIS>::Identity() + Dacc) * imu_sample.acc + acc;
     imu_sample.gyro = (Eigen::Matrix<double,NUMAXIS,NUMAXIS>::Identity() + Dgyro) * imu_sample.gyro + gyros;
 }
 
-double ImuModel::GetNormalDistri(double mean, double sigma)
+double ImuError::GetNormalDistri(double mean, double sigma)
 {
     typedef boost::normal_distribution<double> NormalDistribution;
     typedef boost::variate_generator<RandomGenerator&,NormalDistribution> GaussianGenerator;
@@ -164,12 +164,12 @@ double ImuModel::GetNormalDistri(double mean, double sigma)
     return generator();
 }
 
-void ImuModel::setConfiguration( const Configuration& config )
+void ImuError::setConfiguration( const Configuration& config )
 {
     this->config = config;
 }
     
-const Configuration& ImuModel::getConfiguration() const
+const Configuration& ImuError::getConfiguration() const
 {
     return config;
 }
