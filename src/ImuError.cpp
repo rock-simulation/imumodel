@@ -139,6 +139,11 @@ void ImuError::step()
     gyros[2] = GetNormalDistri(0, stdgyro[2]) + (Hg.transpose() * xgz); // White noise + stochastic noise
 }
 
+base::Vector3d ImuError::getGyroError() const
+{
+    return gyros;
+}
+
 void ImuError::addNoise( base::samples::IMUSensors &imu_sample )
 {
     /** Include the deterministic error to the model (accelerometer and gyroscopes) **/

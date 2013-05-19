@@ -42,6 +42,22 @@ struct Configuration
      * approximation by first Guass-Markov process and need to be determinated
      */
     base::Vector3d gbeta;
+
+    /** default configuration is error free */
+    Configuration() :
+	seed(-1),
+	dt(0.01),
+	Dacc( base::Matrix3d::Zero() ),
+	Dgyro( base::Matrix3d::Zero() ),
+	accrw( base::Vector3d::Zero() ),
+	accrrw( base::Vector3d::Zero() ),
+	accbias( base::Vector3d::Zero() ),
+	abeta( base::Vector3d::Zero() ),
+	gyrorw( base::Vector3d::Zero() ),
+	gyrorrw( base::Vector3d::Zero() ),
+	gyrobias( base::Vector3d::Zero() ),
+	gbeta( base::Vector3d::Zero() ) 
+    {}
 };
 
 class ImuError
@@ -53,6 +69,8 @@ public:
     void addNoise( base::samples::IMUSensors &imu_sample );
     void setConfiguration( const Configuration& config );
     const Configuration& getConfiguration() const;
+
+    base::Vector3d getGyroError() const;
 
 protected:
     static const int NUMAXIS = 3;
@@ -88,6 +106,51 @@ protected:
     typedef boost::mt19937 RandomGenerator;
     RandomGenerator rng; 
     double GetNormalDistri(double mean, double sigma);
+};
+
+/** 
+ * Generate Error for an AHRS system
+ */
+class AhrsError
+{
+    base::Transform3d orientationError;
+    ImuError model;
+
+public:
+    AhrsError()
+    {
+	reset();
+    }
+
+    void setZGyroProperties( double bias, double rw, double rrw )
+    {
+	Configuration config = model.getConfiguration();
+	config.gyrobias = base::Vector3d::UnitZ() * bias;
+	config.gyrorw = base::Vector3d::UnitZ() * rw;
+	config.gyrorrw = base::Vector3d::UnitZ() * rrw;
+	model.setConfiguration( config );
+	model.init();
+    };
+
+    void reset()
+    {
+	model.init();
+	model.reset();
+	orientationError = base::Transform3d::Identity();
+    }
+
+    void step()
+    {
+	model.step();
+	base::Vector3d error = model.getGyroError();
+	orientationError = Eigen::AngleAxisd( error.z(), Eigen::Vector3d::UnitZ() ) * 
+	    orientationError;
+    }
+
+    base::Transform3d getErrorTransform()
+    {
+	return orientationError;
+    }
 };
 
 }
