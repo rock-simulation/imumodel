@@ -179,3 +179,8 @@ const Configuration& ImuError::getConfiguration() const
     return config;
 }
 
+Configuration& ImuError::getConfiguration()
+{
+    return config;
+}
+

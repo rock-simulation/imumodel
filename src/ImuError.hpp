@@ -69,6 +69,7 @@ public:
     void addNoise( base::samples::IMUSensors &imu_sample );
     void setConfiguration( const Configuration& config );
     const Configuration& getConfiguration() const;
+    Configuration& getConfiguration();
 
     base::Vector3d getGyroError() const;
 
@@ -124,16 +125,16 @@ public:
 
     void setZGyroProperties( double bias, double rw, double rrw )
     {
-	Configuration config = model.getConfiguration();
+	Configuration &config( model.getConfiguration() );
 	config.gyrobias = base::Vector3d::UnitZ() * bias;
 	config.gyrorw = base::Vector3d::UnitZ() * rw;
 	config.gyrorrw = base::Vector3d::UnitZ() * rrw;
-	model.setConfiguration( config );
 	model.init();
     };
 
-    void reset()
+    void reset( int seed = -1 )
     {
+	model.getConfiguration().seed = seed;
 	model.init();
 	model.reset();
 	orientationError = base::Transform3d::Identity();
