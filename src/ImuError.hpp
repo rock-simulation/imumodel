@@ -75,6 +75,7 @@ public:
 
     base::Vector3d getGyroError() const;
 
+    static const int NUMAXIS = 3;
 protected:
     Configuration config;
 
