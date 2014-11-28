@@ -73,8 +73,8 @@ public:
 
     base::Vector3d getGyroError() const;
 
-protected:
     static const int NUMAXIS = 3;
+protected:
     Configuration config;
 
     base::Vector2d xax; /**< State vector for acc x axis model*/
