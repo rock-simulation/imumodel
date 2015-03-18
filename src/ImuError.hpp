@@ -63,6 +63,8 @@ struct Configuration
 class ImuError
 {
 public:
+    static const int NUMAXIS = 3;
+
     void init();
     void reset();
     void step();
@@ -74,7 +76,6 @@ public:
     base::Vector3d getGyroError() const;
 
 protected:
-    static const int NUMAXIS = 3;
     Configuration config;
 
     base::Vector2d xax; /**< State vector for acc x axis model*/
