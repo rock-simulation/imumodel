@@ -1,8 +1,8 @@
 #ifndef IMUMODEL_IMUMODEL_HPP__
 #define IMUMODEL_IMUMODEL_HPP__
 
-#include <base/eigen.h>
-#include <base/samples/imu.h>
+#include <base/Eigen.hpp>
+#include <base/samples/IMUSensors.hpp>
 #include <boost/random.hpp>
 
 namespace imumodel
